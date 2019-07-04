@@ -37,7 +37,7 @@ public class MyService extends Service {
 
 
 
-        SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sPref = getSharedPreferences("mysettings", Context.MODE_PRIVATE);
         SharedPreferences.Editor ed = sPref.edit();
         Time = DateFormat.getDateTimeInstance().format(new Date());
         ed.putString("Time", Time);
@@ -55,12 +55,20 @@ public class MyService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+
+
     public void onDestroy() {
         super.onDestroy();
 
 
         End = 1;
         Log.d(LOG_TAG, "Service onDestroy");
+
+        SharedPreferences sPref = getSharedPreferences("mysettings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putInt("Counter", Counter);
+        Log.d(LOG_TAG, "Servic: Counter was putted into SharPref:" + Counter);
+        ed.commit();
 
         Intent intent = new Intent("backCounter");
         intent.putExtra("Counter", Counter);
@@ -89,21 +97,27 @@ public class MyService extends Service {
                 while (End == 0){
                     Counter++;
                     Log.d(LOG_TAG, "Service: Counter = " + Counter);
+
+                    Intent i = new Intent("backCounter");
+                    i.putExtra("Counter", Counter);
+                    sendBroadcast(i);
+
                     //отправить в настройки
                     try {
-                        TimeUnit.SECONDS.sleep(2);
+                        TimeUnit.SECONDS.sleep(1);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
 
                 }
 
-
+/*
                 if (End == 1) {
                     SharedPreferences.Editor ed = sPref.edit();
                     ed.putInt("Counter", Counter);
                     ed.commit();
                 }
+                */
 
                 Log.d(LOG_TAG, "Service: Counter = " + Counter);
             }

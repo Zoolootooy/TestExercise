@@ -1,10 +1,12 @@
 package com.example.testexercise;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,12 +27,12 @@ public class MainActivity extends AppCompatActivity {
     String Time;
     int Counter;
     TextView tvTime, tvCounter;
-    BroadcastReceiver br;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toast.makeText(MainActivity.this, "Activity OnCreate", Toast.LENGTH_SHORT).show();
 
 
         btOn = findViewById(R.id.actrivity_main_btOn);
@@ -38,51 +40,44 @@ public class MainActivity extends AppCompatActivity {
         tvTime = findViewById(R.id.activity_main_tv_LastServiceStartTime);
         tvCounter = findViewById(R.id.activity_main_tv_Counter);
 
-        sPref = getPreferences(MODE_PRIVATE);
+        sPref = getSharedPreferences("mysettings", Context.MODE_PRIVATE);
         Time = sPref.getString("Time", "");
+        Counter = sPref.getInt("Counter", 0);
+
         tvTime.setText(Time);
+        tvCounter.setText(String.valueOf(Counter));
         On = sPref.getBoolean("On", false);
 
         if (On){
             btOff.setEnabled(On);
             btOn.setEnabled(!On);
-            Toast.makeText(MainActivity.this, "On is true", Toast.LENGTH_SHORT).show();
         }
         else {
             btOff.setEnabled(On);
             btOn.setEnabled(!On);
-            Toast.makeText(MainActivity.this, "On is false", Toast.LENGTH_SHORT).show();
+
         }
 
 
-        Toast.makeText(MainActivity.this, "Counter = " + Counter, Toast.LENGTH_SHORT).show();
 
 
 
 
-        IntentFilter intFilt = new IntentFilter("com.example.testexercise");
-        registerReceiver(br, intFilt);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        sPref = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor ed = sPref.edit();
-        ed.putBoolean("On", On);
-        ed.commit();
-        Toast.makeText(MainActivity.this, "Activity OnStop", Toast.LENGTH_SHORT).show();
-    }
+
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        sPref = getPreferences(MODE_PRIVATE);
+        SharedPreferences sPref = getSharedPreferences("mysettings", Context.MODE_PRIVATE);
         SharedPreferences.Editor ed = sPref.edit();
-        ed.putBoolean("On", false);
+        ed.putString("Time", Time);
         ed.putInt("Counter", Counter);
         ed.commit();
+
         StopServ();
 
         Toast.makeText(MainActivity.this, "Activity OnDestroy", Toast.LENGTH_SHORT).show();
@@ -98,24 +93,25 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("backTime");
 
+        intentFilter.addAction("backCounter");
+
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals("backTime")){
-                    tvTime.setText(intent.getStringExtra("Time"));
+                    Time = intent.getStringExtra("Time");
+                    tvTime.setText(Time);
+                }
+                if (intent.getAction().equals("backCounter")){
+                    Counter = intent.getIntExtra("Counter", 0);
+                    String S =  String.valueOf(Counter);
+                    tvCounter.setText(S);
                 }
             }
         };
 
         registerReceiver(receiver, intentFilter);
-/*
-        sPref = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor ed = sPref.edit();
-        Time = DateFormat.getDateTimeInstance().format(new Date());
-        ed.putString("Time", Time);
-        ed.commit();
-*/
-        //tvTime.setText(Time);
+
 
     }
 
@@ -126,20 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         StopServ();
 
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("backCounter");
 
-        BroadcastReceiver receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals("backCounter")){
-                    String S =  String.valueOf(intent.getIntExtra("Counter", 0));
-                    Toast.makeText(MainActivity.this, S, Toast.LENGTH_SHORT).show();
-                    tvCounter.setText(S);
-                }
-            }
-        };
-        registerReceiver(receiver, intentFilter);
 
     }
 
