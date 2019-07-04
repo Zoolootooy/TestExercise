@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
         btOn = findViewById(R.id.actrivity_main_btOn);
         btOff = findViewById(R.id.actrivity_main_btOff);
-        tvTime = findViewById(R.id.actrivity_main_tv_LastServiceStartTime);
-        tvCounter = findViewById(R.id.actrivity_main_tv_Counter);
+        tvTime = findViewById(R.id.activity_main_tv_LastServiceStartTime);
+        tvCounter = findViewById(R.id.activity_main_tv_Counter);
 
         sPref = getPreferences(MODE_PRIVATE);
         Time = sPref.getString("Time", "");
@@ -126,7 +126,21 @@ public class MainActivity extends AppCompatActivity {
 
         StopServ();
 
-        tvTime.setText("Not today!");
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("backCounter");
+
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals("backCounter")){
+                    String S =  String.valueOf(intent.getIntExtra("Counter", 0));
+                    Toast.makeText(MainActivity.this, S, Toast.LENGTH_SHORT).show();
+                    tvCounter.setText(S);
+                }
+            }
+        };
+        registerReceiver(receiver, intentFilter);
+
     }
 
     public void StartServ (){

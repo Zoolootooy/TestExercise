@@ -9,7 +9,7 @@
     android:padding="30px">
 
     <TextView
-        android:id="@+id/actrivity_main_tv_LastServiceStartTime"
+        android:id="@+id/activity_main_tv_LastServiceStartTime"
         android:layout_width="match_parent"
         android:layout_height="100px"
         android:layout_marginBottom="30px"
@@ -17,7 +17,7 @@
         android:text="TextView" />
 
     <TextView
-        android:id="@+id/actrivity_main_tv_Counter"
+        android:id="@+id/activity_main_tv_Counter"
         android:layout_width="match_parent"
         android:layout_height="100px"
         android:layout_marginBottom="30px"

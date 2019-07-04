@@ -24,15 +24,18 @@ public class MyService extends Service {
     ExecutorService es;
     String Time;
     int Counter;
-    int End = 0;
+    int End;
 
     public void onCreate() {
         super.onCreate();
         Log.d(LOG_TAG, "Service onCreate");
+        End = 0;
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(LOG_TAG, "Service onStartCommand");
+
+
 
         SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor ed = sPref.edit();
@@ -48,12 +51,20 @@ public class MyService extends Service {
 
         someTask();
 
+
         return super.onStartCommand(intent, flags, startId);
     }
 
     public void onDestroy() {
         super.onDestroy();
+
+
+        End = 1;
         Log.d(LOG_TAG, "Service onDestroy");
+
+        Intent intent = new Intent("backCounter");
+        intent.putExtra("Counter", Counter);
+        sendBroadcast(intent);
     }
 
     public IBinder onBind(Intent intent) {
@@ -61,10 +72,14 @@ public class MyService extends Service {
         return null;
     }
 
+
+
+
     void someTask() {
-        new Thread(new Runnable() {
+        new Thread (new Runnable() {
             @Override
             public void run() {
+
                 Log.d(LOG_TAG, "Service: New Thread!");
 
                 SharedPreferences sPref = getSharedPreferences("mysettings", Context.MODE_PRIVATE);
@@ -73,22 +88,27 @@ public class MyService extends Service {
 
                 while (End == 0){
                     Counter++;
+                    Log.d(LOG_TAG, "Service: Counter = " + Counter);
                     //отправить в настройки
                     try {
                         TimeUnit.SECONDS.sleep(2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    Log.d(LOG_TAG, "Service: Counter = " + Counter);
+
                 }
 
 
-                SharedPreferences.Editor ed = sPref.edit();
-                ed.putInt("Counter", Counter);
-                ed.commit();
+                if (End == 1) {
+                    SharedPreferences.Editor ed = sPref.edit();
+                    ed.putInt("Counter", Counter);
+                    ed.commit();
+                }
 
-
+                Log.d(LOG_TAG, "Service: Counter = " + Counter);
             }
+
+
         }).start();
     }
 }
