@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toast.makeText(MainActivity.this, "Activity OnCreate", Toast.LENGTH_SHORT).show();
+ //       Toast.makeText(MainActivity.this, "Activity OnCreate", Toast.LENGTH_SHORT).show();
 
 
         btOn = findViewById(R.id.actrivity_main_btOn);
@@ -48,15 +48,10 @@ public class MainActivity extends AppCompatActivity {
         tvCounter.setText(String.valueOf(Counter));
         On = sPref.getBoolean("On", false);
 
-        if (On){
-            btOff.setEnabled(On);
-            btOn.setEnabled(!On);
-        }
-        else {
-            btOff.setEnabled(On);
-            btOn.setEnabled(!On);
 
-        }
+
+        btOn.setEnabled(true);
+        btOff.setEnabled(false);
 
 
 
@@ -80,14 +75,13 @@ public class MainActivity extends AppCompatActivity {
 
         StopServ();
 
-        Toast.makeText(MainActivity.this, "Activity OnDestroy", Toast.LENGTH_SHORT).show();
+  //      Toast.makeText(MainActivity.this, "Activity OnDestroy", Toast.LENGTH_SHORT).show();
 
     }
 
     public void actrivity_main_btOn_OnClick (View view ){
-        On = !On;
-        btOn.setEnabled(!On);
-        btOff.setEnabled(On);
+        btOn.setEnabled(false);
+        btOff.setEnabled(true);
 
         StartServ();
         IntentFilter intentFilter = new IntentFilter();
@@ -116,9 +110,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void actrivity_main_btOff_OnClick (View view ){
-        On = !On;
-        btOn.setEnabled(!On);
-        btOff.setEnabled(On);
+        btOn.setEnabled(true);
+        btOff.setEnabled(false);
 
         StopServ();
 

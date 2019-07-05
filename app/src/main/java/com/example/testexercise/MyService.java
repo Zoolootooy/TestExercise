@@ -64,11 +64,7 @@ public class MyService extends Service {
         End = 1;
         Log.d(LOG_TAG, "Service onDestroy");
 
-        SharedPreferences sPref = getSharedPreferences("mysettings", Context.MODE_PRIVATE);
-        SharedPreferences.Editor ed = sPref.edit();
-        ed.putInt("Counter", Counter);
-        Log.d(LOG_TAG, "Servic: Counter was putted into SharPref:" + Counter);
-        ed.commit();
+        //
 
         Intent intent = new Intent("backCounter");
         intent.putExtra("Counter", Counter);
@@ -88,7 +84,7 @@ public class MyService extends Service {
             @Override
             public void run() {
 
-                Log.d(LOG_TAG, "Service: New Thread!");
+                Log.d(LOG_TAG, "Service: Thread was started");
 
                 SharedPreferences sPref = getSharedPreferences("mysettings", Context.MODE_PRIVATE);
                 Counter = sPref.getInt("Counter", 0);
@@ -104,22 +100,23 @@ public class MyService extends Service {
 
                     //отправить в настройки
                     try {
-                        TimeUnit.SECONDS.sleep(1);
+                        TimeUnit.SECONDS.sleep(5);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
 
                 }
 
-/*
-                if (End == 1) {
+                if (End == 1){
+                    sPref = getSharedPreferences("mysettings", Context.MODE_PRIVATE);
                     SharedPreferences.Editor ed = sPref.edit();
                     ed.putInt("Counter", Counter);
                     ed.commit();
+                    End = 2;
                 }
-                */
 
-                Log.d(LOG_TAG, "Service: Counter = " + Counter);
+
+
             }
 
 
